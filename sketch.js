@@ -19,18 +19,52 @@ function draw() {
     createVector(-560 / sqrt(3), 280),
     createVector(560 / sqrt(3), 280),
   ];
-  display_sierpinski(5, 0, vertices);
+  display_sierpinski(2, 0.5, vertices);
 }
 
-function display_sierpinki(level, ratio, points) {
+// `proportion` is proportion of side in clockwise direction
+// `points` is an array of position vectors for the vertices of the triangle,
+// clockwise starting from top vertex. Centre of initial big triangle as origin.
+function display_sierpinki(level, proportion, points) {
   // === Base case:
   if (level == 0) {
     return;
   }
 
   // === Processing:
+  push();
+  stroke(255);
+  strokeWeight(1);
+  noFill();
+  beginShape();
+
+  endShape();
+  pop();
 
   // === Recurse:
+  // Sub-triangle at vertex 1
+  let v1_partition_points = [
+    points[0].copy(),
+    p5.Vector.subtract(points[1], points[0]).mult(proportion),
+    p5.Vector.subtract(points[0], points[2]).mult(proportion),
+  ];
+  display_sierpinki(level - 1, proportion, v1_partition_points);
+
+  // Sub-triangle at vertex 2
+  let v2_partition_points = [
+    p5.Vector.subtract(points[1], points[0]).mult(proportion),
+    points[1].copy(),
+    p5.Vector.subtract(points[2], points[1]).mult(proportion),
+  ];
+  display_sierpinki(level - 1, proportion, v2_partition_points);
+
+  // Sub-triangle at vertex 3
+  let v3_partition_points = [
+    p5.Vector.subtract(points[0], points[2]).mult(proportion),
+    p5.Vector.subtract(points[2], points[1]).mult(proportion),
+    points[2].copy(),
+  ];
+  display_sierpinki(level - 1, proportion, v3_partition_points);
 }
 
 loopBool = true;
