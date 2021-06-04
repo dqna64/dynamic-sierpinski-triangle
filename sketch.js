@@ -16,16 +16,21 @@ function draw() {
   // centre of the equilateral triangle as origin.
   let vertices = [
     createVector(0, -280),
-    createVector(-560 / sqrt(3), 280),
     createVector(560 / sqrt(3), 280),
+    createVector(-560 / sqrt(3), 280),
   ];
-  display_sierpinski(2, 0.5, vertices);
+  //   let vertices = [
+  //     createVector(DIS_WIDTH / 2, DIS_HEIGHT / 2 - 280),
+  //     createVector(DIS_WIDTH / 2 + 560 / Math.sqrt(3), DIS_HEIGHT / 2 + 280),
+  //     createVector(DIS_WIDTH / 2 - 560 / Math.sqrt(3), DIS_HEIGHT / 2 + 280),
+  //   ];
+  display_sierpinski(5, 0.5, vertices);
 }
 
 // `proportion` is proportion of side in clockwise direction
 // `points` is an array of position vectors for the vertices of the triangle,
 // clockwise starting from top vertex. Centre of initial big triangle as origin.
-function display_sierpinki(level, proportion, points) {
+function display_sierpinski(level, proportion, points) {
   // === Base case:
   if (level == 0) {
     return;
@@ -36,35 +41,41 @@ function display_sierpinki(level, proportion, points) {
   stroke(255);
   strokeWeight(1);
   noFill();
-  beginShape();
-
-  endShape();
+  translate(DIS_WIDTH / 2, DIS_HEIGHT / 2);
+  //   beginShape(LINES);
+  //   vertex(points[0].x, points[0].y);
+  //   vertex(points[1].x, points[1].y);
+  //   vertex(points[2].x, points[2].y);
+  //   endShape();
+  line(points[0].x, points[0].y, points[1].x, points[1].y);
+  line(points[1].x, points[1].y, points[2].x, points[2].y);
+  line(points[2].x, points[2].y, points[0].x, points[0].y);
   pop();
 
   // === Recurse:
   // Sub-triangle at vertex 1
   let v1_partition_points = [
     points[0].copy(),
-    p5.Vector.subtract(points[1], points[0]).mult(proportion),
-    p5.Vector.subtract(points[0], points[2]).mult(proportion),
+    points[0].copy().add(p5.Vector.sub(points[1], points[0]).mult(proportion)),
+    points[2].copy().add(p5.Vector.sub(points[0], points[2]).mult(proportion)),
   ];
-  display_sierpinki(level - 1, proportion, v1_partition_points);
+  display_sierpinski(level - 1, proportion, v1_partition_points);
 
   // Sub-triangle at vertex 2
   let v2_partition_points = [
-    p5.Vector.subtract(points[1], points[0]).mult(proportion),
+    points[0].copy().add(p5.Vector.sub(points[1], points[0]).mult(proportion)),
     points[1].copy(),
-    p5.Vector.subtract(points[2], points[1]).mult(proportion),
+    points[1].copy().add(p5.Vector.sub(points[2], points[1]).mult(proportion)),
   ];
-  display_sierpinki(level - 1, proportion, v2_partition_points);
+  display_sierpinski(level - 1, proportion, v2_partition_points);
 
   // Sub-triangle at vertex 3
   let v3_partition_points = [
-    p5.Vector.subtract(points[0], points[2]).mult(proportion),
-    p5.Vector.subtract(points[2], points[1]).mult(proportion),
+    points[2].copy().add(p5.Vector.sub(points[0], points[2]).mult(proportion)),
+    points[1].copy().add(p5.Vector.sub(points[2], points[1]).mult(proportion)),
     points[2].copy(),
   ];
-  display_sierpinki(level - 1, proportion, v3_partition_points);
+  display_sierpinski(level - 1, proportion, v3_partition_points);
 }
 
 loopBool = true;
