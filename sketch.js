@@ -3,6 +3,9 @@ let DIS_HEIGHT = 720;
 let FPS = 24;
 let debug = true;
 let aesthetics = true;
+let t = 0;
+let dt = 0.01;
+let triangle_radius = 0.8 * (DIS_HEIGHT / 2);
 
 function setup() {
   createCanvas(DIS_WIDTH, DIS_HEIGHT);
@@ -15,19 +18,22 @@ function draw() {
   // a vertex of the largest triangle as position vectors with
   // centre of the equilateral triangle as origin.
   let vertices = [
-    createVector(0, -280),
-    createVector(560 / sqrt(3), 280),
-    createVector(-560 / sqrt(3), 280),
+    createVector(0, -triangle_radius),
+    createVector((triangle_radius * Math.sqrt(3)) / 2, triangle_radius / 2),
+    createVector((-triangle_radius * Math.sqrt(3)) / 2, triangle_radius / 2),
   ];
   //   let vertices = [
   //     createVector(DIS_WIDTH / 2, DIS_HEIGHT / 2 - 280),
   //     createVector(DIS_WIDTH / 2 + 560 / Math.sqrt(3), DIS_HEIGHT / 2 + 280),
   //     createVector(DIS_WIDTH / 2 - 560 / Math.sqrt(3), DIS_HEIGHT / 2 + 280),
   //   ];
-  display_sierpinski(5, 0.5, vertices);
+  display_sierpinski(7, Math.acos(1 - 2 * (t - Math.floor(t))) / PI, vertices);
+
+  t += dt;
 }
 
-// `proportion` is proportion of side in clockwise direction
+// `level` is recursion depth, decreases to 0 which is base case.
+// `proportion` is proportion of side in clockwise direction, in range [0, 1]
 // `points` is an array of position vectors for the vertices of the triangle,
 // clockwise starting from top vertex. Centre of initial big triangle as origin.
 function display_sierpinski(level, proportion, points) {
@@ -39,17 +45,19 @@ function display_sierpinski(level, proportion, points) {
   // === Processing:
   push();
   stroke(255);
-  strokeWeight(1);
+  strokeWeight(0.7 * level);
   noFill();
   translate(DIS_WIDTH / 2, DIS_HEIGHT / 2);
-  //   beginShape(LINES);
-  //   vertex(points[0].x, points[0].y);
-  //   vertex(points[1].x, points[1].y);
-  //   vertex(points[2].x, points[2].y);
-  //   endShape();
-  line(points[0].x, points[0].y, points[1].x, points[1].y);
-  line(points[1].x, points[1].y, points[2].x, points[2].y);
-  line(points[2].x, points[2].y, points[0].x, points[0].y);
+  rotate(-0.3 * t);
+  beginShape();
+  vertex(points[0].x, points[0].y);
+  vertex(points[1].x, points[1].y);
+  vertex(points[2].x, points[2].y);
+  vertex(points[0].x, points[0].y);
+  endShape();
+  //   line(points[0].x, points[0].y, points[1].x, points[1].y);
+  //   line(points[1].x, points[1].y, points[2].x, points[2].y);
+  //   line(points[2].x, points[2].y, points[0].x, points[0].y);
   pop();
 
   // === Recurse:
